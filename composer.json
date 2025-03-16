@@ -19,10 +19,6 @@
         "guzzlehttp/guzzle": "^7.0",
         "illuminate/contracts": "^10.0||^11.0||^12.0"
     },
-    "suggest": {
-        "illuminate/support": "for the Laravel integration",
-        "illuminate/contracts": "for the Laravel integration"
-    },
     "require-dev": {
         "phpunit/phpunit": "^10.0",
         "orchestra/testbench": "^8.0|^9.0"
