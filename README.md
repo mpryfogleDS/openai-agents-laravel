@@ -1,4 +1,4 @@
-# OpenAI Agents for Laravel
+# OpenAI Agents for Laravel - Fully Prepared by CLAUDE AI
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/openai/agents.svg?style=flat-square)](https://packagist.org/packages/openai/agents)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/openai/openai-agents-laravel/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/openai/openai-agents-laravel/actions?query=workflow%3Arun-tests+branch%3Amain)
