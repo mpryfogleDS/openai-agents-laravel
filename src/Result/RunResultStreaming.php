@@ -1,6 +1,6 @@
 <?php
 
-namespace OpenAI\Agents\Result;
+namespace JawadAshraf\OpenAI\Agents\Result;
 
 use OpenAI\Agents\Agent;
 use OpenAI\Agents\RunConfig;

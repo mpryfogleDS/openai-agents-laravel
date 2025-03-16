@@ -1,6 +1,6 @@
 <?php
 
-namespace OpenAI\Agents\Tools;
+namespace JawadAshraf\OpenAI\Agents\Tools;
 
 use OpenAI\Agents\RunContext;
 use Closure;

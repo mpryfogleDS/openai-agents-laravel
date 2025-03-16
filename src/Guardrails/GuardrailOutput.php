@@ -1,6 +1,6 @@
 <?php
 
-namespace OpenAI\Agents\Guardrails;
+namespace JawadAshraf\OpenAI\Agents\Guardrails;
 
 class GuardrailOutput
 {

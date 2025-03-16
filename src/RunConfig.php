@@ -1,6 +1,6 @@
 <?php
 
-namespace OpenAI\Agents;
+namespace JawadAshraf\OpenAI\Agents;
 
 use OpenAI\Agents\Models\Model;
 use OpenAI\Agents\Models\ModelSettings;

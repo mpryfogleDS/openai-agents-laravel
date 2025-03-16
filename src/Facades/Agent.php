@@ -1,6 +1,6 @@
 <?php
 
-namespace OpenAI\Agents\Facades;
+namespace JawadAshraf\OpenAI\Agents\Facades;
 
 use Illuminate\Support\Facades\Facade;
 use OpenAI\Agents\Agent as AgentClass;

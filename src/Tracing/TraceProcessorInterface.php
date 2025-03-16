@@ -1,6 +1,6 @@
 <?php
 
-namespace OpenAI\Agents\Tracing;
+namespace JawadAshraf\OpenAI\Agents\Tracing;
 
 interface TraceProcessorInterface
 {

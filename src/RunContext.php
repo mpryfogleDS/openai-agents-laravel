@@ -1,6 +1,6 @@
 <?php
 
-namespace OpenAI\Agents;
+namespace JawadAshraf\OpenAI\Agents;
 
 use OpenAI\Agents\Items\Usage;
 

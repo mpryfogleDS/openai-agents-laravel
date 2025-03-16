@@ -1,6 +1,6 @@
 <?php
 
-namespace OpenAI\Agents;
+namespace JawadAshraf\OpenAI\Agents;
 
 use Closure;
 use OpenAI\Agents\Models\Model;

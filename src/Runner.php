@@ -1,6 +1,6 @@
 <?php
 
-namespace OpenAI\Agents;
+namespace JawadAshraf\OpenAI\Agents;
 
 use Illuminate\Support\Facades\Log;
 use OpenAI\Agents\Models\ModelProviderInterface;

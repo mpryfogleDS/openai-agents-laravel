@@ -1,6 +1,6 @@
 <?php
 
-namespace OpenAI\Agents\Items;
+namespace JawadAshraf\OpenAI\Agents\Items;
 
 class ModelResponse
 {

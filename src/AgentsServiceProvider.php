@@ -1,6 +1,6 @@
 <?php
 
-namespace OpenAI\Agents;
+namespace JawadAshraf\OpenAI\Agents;
 
 use Illuminate\Support\ServiceProvider;
 use OpenAI\Agents\Models\ModelSettings;
