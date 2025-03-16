@@ -1,13 +1,20 @@
 # OpenAI Agents for Laravel
 
-The OpenAI Agents SDK for Laravel is a lightweight yet powerful framework for building multi-agent workflows. This package is a Laravel port of the [OpenAI Agents Python SDK](https://github.com/openai/openai-agents-python).
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/openai/agents.svg?style=flat-square)](https://packagist.org/packages/openai/agents)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/openai/openai-agents-laravel/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/openai/openai-agents-laravel/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Lint Action Status](https://img.shields.io/github/actions/workflow/status/openai/openai-agents-laravel/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/openai/openai-agents-laravel/actions?query=workflow%3Afix-php-code-style-issues+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/openai/agents.svg?style=flat-square)](https://packagist.org/packages/openai/agents)
 
-## Core concepts:
+The OpenAI Agents for Laravel package is a lightweight yet powerful framework for building multi-agent AI workflows in Laravel applications. This package is a Laravel port of the [OpenAI Agents Python SDK](https://github.com/openai/openai-agents-python).
 
-1. **Agents**: LLMs configured with instructions, tools, guardrails, and handoffs
-2. **Handoffs**: Allow agents to transfer control to other agents for specific tasks
-3. **Guardrails**: Configurable safety checks for input and output validation
-4. **Tracing**: Built-in tracking of agent runs, allowing you to view, debug and optimize your workflows
+## Features
+
+- **Agent loop**: Built-in agent loop that handles calling tools, sending results to the LLM, and looping until the LLM is done
+- **Laravel-first**: Uses built-in Laravel features to orchestrate and chain agents
+- **Handoffs**: A powerful feature to coordinate and delegate between multiple agents
+- **Guardrails**: Run input validations and checks in parallel to your agents, breaking early if the checks fail
+- **Function tools**: Turn any PHP method into a tool, with automatic schema generation
+- **Tracing**: Built-in tracing that lets you visualize, debug and monitor your workflows
 
 ## Installation
 
@@ -81,34 +88,75 @@ echo $result->getTextOutput();
 ```php
 use OpenAI\Agents\Facades\Agent;
 use OpenAI\Agents\Facades\Runner;
+use OpenAI\Agents\RunContext;
+use OpenAI\Agents\Tools\Tool;
 
-function getWeather(mixed $context, array $args): string {
-    $city = $args['city'] ?? 'Unknown';
-    return "The weather in {$city} is sunny.";
-}
+$weatherTool = new Tool(
+    'get_weather',
+    'Get the weather for a city',
+    function (RunContext $context, array $args) {
+        $city = $args['city'] ?? 'Unknown';
+        return "The weather in {$city} is sunny.";
+    }
+);
 
 $agent = Agent::create(
     "Hello world",
     "You are a helpful agent."
-)->withTools([function_tool('getWeather', 'Get the weather for a city')]);
+)->withTools([$weatherTool]);
 
 $result = Runner::runSync($agent, "What's the weather in Tokyo?");
 echo $result->getTextOutput();
 // The weather in Tokyo is sunny.
 ```
 
-## The agent loop
+## Documentation
 
-When you call `Runner::run()`, we run a loop until we get a final output.
+For detailed documentation, visit the [OpenAI Agents for Laravel documentation](https://github.com/your-username/openai-agents-laravel/blob/main/docs/index.md).
 
-1. We call the LLM, using the model and settings on the agent, and the message history.
-2. The LLM returns a response, which may include tool calls.
-3. If the response has a final output (see below for more on this), we return it and end the loop.
-4. If the response has a handoff, we set the agent to the new agent and go back to step 1.
-5. We process the tool calls (if any) and append the tool responses messages. Then we go to step 1.
+- [Quickstart](docs/quickstart.md)
+- [Agents](docs/agents.md)
+- [Running Agents](docs/running_agents.md)
+- [Tools](docs/tools.md)
+- [Handoffs](docs/handoffs.md)
+- [Guardrails](docs/guardrails.md)
+- [Models](docs/models.md)
+- [Tracing](docs/tracing.md)
+- [Examples](docs/examples.md)
+- [API Reference](docs/ref/index.md)
 
-There is a `maxTurns` parameter that you can use to limit the number of times the loop executes.
+## Examples
+
+Check out the [examples directory](examples) for more usage examples:
+
+- [Hello World](examples/hello_world.php): A simple agent example
+- [Handoffs](examples/handoffs.php): An example of agent handoffs
+- [Functions](examples/functions.php): An example using function tools
+- [Laravel Controller Example](examples/AgentController.php): An example Laravel controller for synchronous and streaming agent responses
+
+## Testing
+
+```bash
+composer test
+```
+
+## Changelog
+
+Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
+
+## Contributing
+
+Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+## Security Vulnerabilities
+
+Please report security vulnerabilities to [security@example.com](mailto:security@example.com).
+
+## Credits
+
+- [Your Name](https://github.com/your-username)
+- [All Contributors](../../contributors)
 
 ## License
 
-This package is open-sourced software licensed under the MIT license.
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
