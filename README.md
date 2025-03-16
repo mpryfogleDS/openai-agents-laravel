@@ -1,4 +1,4 @@
-# OpenAI Agents for Laravel - Fully Prepared by CLAUDE AI - Replacated from [openai-agents-python](https://github.com/openai/openai-agents-python)
+# OpenAI Agents for Laravel - Fully Prepared by CLAUDE AI - Replicated from [openai-agents-python](https://github.com/openai/openai-agents-python)
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/openai/agents.svg?style=flat-square)](https://packagist.org/packages/openai/agents)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/openai/openai-agents-laravel/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/openai/openai-agents-laravel/actions?query=workflow%3Arun-tests+branch%3Amain)
@@ -150,11 +150,12 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Security Vulnerabilities
 
-Please report security vulnerabilities to [security@example.com](mailto:security@example.com).
+Please report security vulnerabilities to [security@example.com](mailto:jawadashraf78@gmail.com).
 
 ## Credits
 
-- [Your Name](https://github.com/your-username)
+- CLAUDE AI
+- [Jawad Ashraf](https://github.com/jawadashraf)
 - [All Contributors](../../contributors)
 
 ## License
