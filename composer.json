@@ -1,6 +1,7 @@
 {
     "name": "jawadashraf/openai-agents-laravel",
     "description": "The OpenAI Agents SDK for Laravel - a lightweight yet powerful framework for building multi-agent workflows",
+    "version": "1.0.0",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -13,7 +14,7 @@
         "php": "^8.1",
         "illuminate/support": "^9.0|^10.0|^11.0",
         "illuminate/contracts": "^9.0|^10.0|^11.0",
-        "openai-php/client": "^0.8.0",
+        "openai-php/client": "^0.10.3",
         "guzzlehttp/guzzle": "^7.0"
     },
     "require-dev": {
