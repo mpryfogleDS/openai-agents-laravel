@@ -6,8 +6,11 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "OpenAI",
-            "email": "jawadashraf78@openai.com"
+            "name": "CLAUDE AI"
+        },
+        {
+            "name": "Jawad Ashraf",
+            "email": "jawadashraf78@gmail.com"
         }
     ],
     "require": {
