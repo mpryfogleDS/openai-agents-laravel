@@ -1,0 +1,52 @@
+{
+    "name": "openai/agents",
+    "description": "The OpenAI Agents SDK for Laravel - a lightweight yet powerful framework for building multi-agent workflows",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "OpenAI",
+            "email": "support@openai.com"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "illuminate/support": "^9.0|^10.0|^11.0",
+        "illuminate/contracts": "^9.0|^10.0|^11.0",
+        "openai-php/client": "^0.8.0",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "orchestra/testbench": "^8.0|^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "OpenAI\\Agents\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "OpenAI\\Agents\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "OpenAI\\Agents\\AgentsServiceProvider"
+            ],
+            "aliases": {
+                "Agent": "OpenAI\\Agents\\Facades\\Agent",
+                "Runner": "OpenAI\\Agents\\Facades\\Runner"
+            }
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
