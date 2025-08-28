@@ -1,24 +1,27 @@
 <?php
 
-namespace JawadAshraf\OpenAI\Agents\Facades;
+namespace OpenAI\Agents\Facades;
 
 use Illuminate\Support\Facades\Facade;
 use OpenAI\Agents\Agent as AgentClass;
+use OpenAI\Agents\Models\Model;
 use OpenAI\Agents\Models\ModelSettings;
+use OpenAI\Agents\RunContext;
+use OpenAI\Agents\Tools\Tool;
 
 /**
- * @method static \OpenAI\Agents\Agent create(string $name, string|\Closure|null $instructions = null, ?\OpenAI\Agents\Models\ModelSettings $modelSettings = null)
- * @method static \OpenAI\Agents\Agent withHandoffDescription(string $description)
- * @method static \OpenAI\Agents\Agent withHandoffs(array $handoffs)
- * @method static \OpenAI\Agents\Agent withModel(string|\OpenAI\Agents\Models\Model $model)
- * @method static \OpenAI\Agents\Agent withModelSettings(\OpenAI\Agents\Models\ModelSettings $settings)
- * @method static \OpenAI\Agents\Agent withTools(array $tools)
- * @method static \OpenAI\Agents\Agent withInputGuardrails(array $guardrails)
- * @method static \OpenAI\Agents\Agent withOutputGuardrails(array $guardrails)
- * @method static \OpenAI\Agents\Agent withOutputType(string $type)
- * @method static \OpenAI\Agents\Agent clone(array $attributes = [])
- * @method static \OpenAI\Agents\Tools\Tool asTool(?string $toolName = null, ?string $toolDescription = null, ?callable $customOutputExtractor = null)
- * @method static string|null getSystemPrompt(\OpenAI\Agents\RunContext $context)
+ * @method static AgentClass create(string $name, string|\Closure|null $instructions = null, ?ModelSettings $modelSettings = null)
+ * @method static AgentClass withHandoffDescription(string $description)
+ * @method static AgentClass withHandoffs(array $handoffs)
+ * @method static AgentClass withModel(string|Model $model)
+ * @method static AgentClass withModelSettings(ModelSettings $settings)
+ * @method static AgentClass withTools(array $tools)
+ * @method static AgentClass withInputGuardrails(array $guardrails)
+ * @method static AgentClass withOutputGuardrails(array $guardrails)
+ * @method static AgentClass withOutputType(string $type)
+ * @method static AgentClass clone (array $attributes = [])
+ * @method static Tool asTool(?string $toolName = null, ?string $toolDescription = null, ?callable $customOutputExtractor = null)
+ * @method static string|null getSystemPrompt(RunContext $context)
  */
 class Agent extends Facade
 {
@@ -27,21 +30,9 @@ class Agent extends Facade
      *
      * @return string
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return AgentClass::class;
     }
-    
-    /**
-     * Create a new agent instance.
-     *
-     * @param string $name
-     * @param string|\Closure|null $instructions
-     * @param ModelSettings|null $modelSettings
-     * @return \OpenAI\Agents\Agent
-     */
-    public static function create(string $name, $instructions = null, ?ModelSettings $modelSettings = null)
-    {
-        return new AgentClass($name, $instructions, $modelSettings);
-    }
+
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace JawadAshraf\OpenAI\Agents\Models;
+namespace OpenAI\Agents\Models;
 
 interface ModelProviderInterface
 {

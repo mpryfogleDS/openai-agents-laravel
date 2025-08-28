@@ -1,14 +1,11 @@
 <?php
 
-namespace JawadAshraf\OpenAI\Agents;
+namespace OpenAI\Agents;
 
 use Closure;
 use OpenAI\Agents\Models\Model;
 use OpenAI\Agents\Models\ModelSettings;
 use OpenAI\Agents\Tools\Tool;
-use OpenAI\Agents\Guardrails\InputGuardrail;
-use OpenAI\Agents\Guardrails\OutputGuardrail;
-use OpenAI\Agents\Result\RunResult;
 
 class Agent
 {
@@ -24,7 +21,7 @@ class Agent
      *
      * @var string|Closure|null
      */
-    protected $instructions = null;
+    protected string|Closure|null $instructions = null;
 
     /**
      * A description of the agent.
@@ -90,13 +87,27 @@ class Agent
      * @param ModelSettings|null $modelSettings
      */
     public function __construct(
-        string $name,
-        $instructions = null,
+        string         $name,
+        Closure|string $instructions = null,
         ?ModelSettings $modelSettings = null
-    ) {
+    )
+    {
         $this->name = $name;
         $this->instructions = $instructions;
         $this->modelSettings = $modelSettings ?? app(ModelSettings::class);
+    }
+
+    /**
+     * Create a new agent instance.
+     *
+     * @param string $name
+     * @param Closure|string|null $instructions
+     * @param ModelSettings|null $modelSettings
+     * @return Agent
+     */
+    public static function create(string $name, Closure|string $instructions = null, ?ModelSettings $modelSettings = null): Agent
+    {
+        return new self($name, $instructions, $modelSettings);
     }
 
     /**
@@ -204,7 +215,7 @@ class Agent
     public function clone(array $attributes = []): self
     {
         $clone = new self($this->name, $this->instructions, $this->modelSettings);
-        
+
         $clone->handoffDescription = $this->handoffDescription;
         $clone->handoffs = $this->handoffs;
         $clone->model = $this->model;
@@ -212,11 +223,11 @@ class Agent
         $clone->inputGuardrails = $this->inputGuardrails;
         $clone->outputGuardrails = $this->outputGuardrails;
         $clone->outputType = $this->outputType;
-        
+
         foreach ($attributes as $key => $value) {
             $clone->{$key} = $value;
         }
-        
+
         return $clone;
     }
 
@@ -236,11 +247,11 @@ class Agent
             function ($context, $input) use ($customOutputExtractor) {
                 $runner = app(Runner::class);
                 $output = $runner->run($this, $input, $context);
-                
+
                 if ($customOutputExtractor) {
                     return $customOutputExtractor($output);
                 }
-                
+
                 return $output->getTextOutput();
             }
         );
@@ -259,7 +270,7 @@ class Agent
         } elseif ($this->instructions instanceof Closure) {
             return ($this->instructions)($context, $this);
         }
-        
+
         return null;
     }
 

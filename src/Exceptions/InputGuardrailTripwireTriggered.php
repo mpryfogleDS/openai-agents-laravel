@@ -1,6 +1,6 @@
 <?php
 
-namespace JawadAshraf\OpenAI\Agents\Exceptions;
+namespace OpenAI\Agents\Exceptions;
 
 use OpenAI\Agents\Guardrails\InputGuardrailResult;
 

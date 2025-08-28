@@ -1,39 +1,39 @@
 <?php
 
-namespace JawadAshraf\OpenAI\Agents;
+namespace OpenAI\Agents;
 
 use Illuminate\Support\Facades\Log;
-use OpenAI\Agents\Models\ModelProviderInterface;
-use OpenAI\Agents\Models\ModelSettings;
 use OpenAI\Agents\Exceptions\AgentsException;
 use OpenAI\Agents\Exceptions\MaxTurnsExceeded;
 use OpenAI\Agents\Guardrails\InputGuardrailResult;
 use OpenAI\Agents\Guardrails\OutputGuardrailResult;
-use OpenAI\Agents\Tracing\Trace;
-use OpenAI\Agents\Result\RunResult;
 use OpenAI\Agents\Handoffs\Handoff;
 use OpenAI\Agents\Items\ModelResponse;
 use OpenAI\Agents\Items\RunItem;
+use OpenAI\Agents\Models\ModelProviderInterface;
+use OpenAI\Agents\Models\ModelSettings;
+use OpenAI\Agents\Result\RunResult;
 use OpenAI\Agents\Result\RunResultStreaming;
+use OpenAI\Agents\Tracing\Trace;
 
 class Runner
 {
-    const DEFAULT_MAX_TURNS = 10;
-    
+    const int DEFAULT_MAX_TURNS = 10;
+
     /**
      * The model provider implementation.
      *
      * @var ModelProviderInterface
      */
     protected ModelProviderInterface $modelProvider;
-    
+
     /**
      * The trace manager
      *
      * @var Trace
      */
     protected Trace $trace;
-    
+
     /**
      * Create a new runner instance.
      *
@@ -45,7 +45,7 @@ class Runner
         $this->modelProvider = $modelProvider;
         $this->trace = $trace;
     }
-    
+
     /**
      * Run a workflow starting at the given agent.
      *
@@ -59,39 +59,40 @@ class Runner
      * @throws MaxTurnsExceeded
      */
     public function run(
-        Agent $startingAgent,
-        $input,
-        $context = null,
-        ?int $maxTurns = null,
+        Agent      $startingAgent,
+                   $input,
+                   $context = null,
+        ?int       $maxTurns = null,
         ?RunConfig $runConfig = null
-    ): RunResult {
+    ): RunResult
+    {
         $runConfig = $runConfig ?? new RunConfig();
         $maxTurns = $maxTurns ?? config('agents.default_max_turns', self::DEFAULT_MAX_TURNS);
-        
+
         $this->trace->start($runConfig->workflowName, $runConfig->traceId, $runConfig->groupId, $runConfig->traceMetadata);
-        
+
         try {
             $currentTurn = 0;
             $originalInput = $input;
             $generatedItems = [];
             $modelResponses = [];
-            
+
             $contextWrapper = new RunContext($context);
-            
+
             $inputGuardrailResults = [];
-            
+
             $currentAgent = $startingAgent;
             $shouldRunAgentStartHooks = true;
-            
+
             $currentSpan = null;
-            
+
             while (true) {
                 // Start an agent span if we don't have one
                 if ($currentSpan === null) {
                     $handoffNames = $this->getHandoffNames($currentAgent);
                     $toolNames = $this->getToolNames($currentAgent);
                     $outputTypeName = $currentAgent->getOutputType() ?? 'string';
-                    
+
                     $currentSpan = $this->trace->startAgentSpan(
                         $currentAgent->getName(),
                         $handoffNames,
@@ -99,7 +100,7 @@ class Runner
                         $outputTypeName
                     );
                 }
-                
+
                 $currentTurn++;
                 if ($currentTurn > $maxTurns) {
                     $this->trace->addErrorToSpan(
@@ -109,9 +110,9 @@ class Runner
                     );
                     throw new MaxTurnsExceeded("Max turns ({$maxTurns}) exceeded");
                 }
-                
+
                 Log::debug("Running agent {$currentAgent->getName()} (turn {$currentTurn})");
-                
+
                 if ($currentTurn === 1) {
                     // Run input guardrails on the first turn
                     $inputGuardrailResults = $this->runInputGuardrails(
@@ -120,7 +121,7 @@ class Runner
                         $input,
                         $contextWrapper
                     );
-                    
+
                     $turnResult = $this->runSingleTurn(
                         $currentAgent,
                         $originalInput,
@@ -139,15 +140,15 @@ class Runner
                         $shouldRunAgentStartHooks
                     );
                 }
-                
+
                 $shouldRunAgentStartHooks = false;
-                
+
                 $modelResponses[] = $turnResult['modelResponse'];
                 $originalInput = $turnResult['originalInput'];
                 $generatedItems = $turnResult['generatedItems'];
-                
+
                 $nextStep = $turnResult['nextStep'];
-                
+
                 if ($nextStep['type'] === 'final_output') {
                     $outputGuardrailResults = $this->runOutputGuardrails(
                         $currentAgent->getOutputGuardrails(),
@@ -155,9 +156,9 @@ class Runner
                         $nextStep['output'],
                         $contextWrapper
                     );
-                    
+
                     $this->trace->finishSpan($currentSpan);
-                    
+
                     return new RunResult(
                         $originalInput,
                         $generatedItems,
@@ -185,7 +186,7 @@ class Runner
             $this->trace->finish();
         }
     }
-    
+
     /**
      * Run a workflow in streaming mode.
      *
@@ -197,24 +198,25 @@ class Runner
      * @return RunResultStreaming
      */
     public function runStreamed(
-        Agent $startingAgent,
-        $input,
-        $context = null,
-        ?int $maxTurns = null,
+        Agent      $startingAgent,
+                   $input,
+                   $context = null,
+        ?int       $maxTurns = null,
         ?RunConfig $runConfig = null
-    ): RunResultStreaming {
+    ): RunResultStreaming
+    {
         $runConfig = $runConfig ?? new RunConfig();
         $maxTurns = $maxTurns ?? config('agents.default_max_turns', self::DEFAULT_MAX_TURNS);
-        
+
         $contextWrapper = new RunContext($context);
-        
+
         $this->trace->start(
             $runConfig->workflowName,
             $runConfig->traceId,
             $runConfig->groupId,
             $runConfig->traceMetadata
         );
-        
+
         $streamedResult = new RunResultStreaming(
             $input,
             [],
@@ -227,20 +229,20 @@ class Runner
             [],
             []
         );
-        
+
         // We need to run this in async/background in PHP
         // Due to PHP limitations, we'll simulate this by preparing the streaming result
         // and returning it immediately. The caller will have to handle streaming via callbacks
-        
+
         // Initialize the streamed run and return the object
         // The actual streaming happens when the user accesses the streaming methods
         $streamedResult->setRunner($this);
         $streamedResult->setContext($contextWrapper);
         $streamedResult->setRunConfig($runConfig);
-        
+
         return $streamedResult;
     }
-    
+
     /**
      * Run a single turn in the agent loop.
      *
@@ -253,20 +255,21 @@ class Runner
      * @return array
      */
     protected function runSingleTurn(
-        Agent $agent,
-        $originalInput,
-        array $generatedItems,
+        Agent      $agent,
+                   $originalInput,
+        array      $generatedItems,
         RunContext $contextWrapper,
-        RunConfig $runConfig,
-        bool $shouldRunAgentStartHooks
-    ): array {
+        RunConfig  $runConfig,
+        bool       $shouldRunAgentStartHooks
+    ): array
+    {
         $systemPrompt = $agent->getSystemPrompt($contextWrapper);
-        
+
         $input = $this->prepareInput($originalInput, $generatedItems);
-        
+
         $model = $this->getModel($agent, $runConfig);
         $modelSettings = $this->resolveModelSettings($agent->getModelSettings(), $runConfig->modelSettings);
-        
+
         $response = $model->getResponse(
             $systemPrompt,
             $input,
@@ -275,7 +278,7 @@ class Runner
             $agent->getOutputType(),
             $agent->getHandoffs()
         );
-        
+
         // Process the response
         $processedResponse = $this->processModelResponse(
             $agent,
@@ -283,7 +286,7 @@ class Runner
             $agent->getOutputType(),
             $agent->getHandoffs()
         );
-        
+
         // Execute tools and side effects
         return $this->executeToolsAndSideEffects(
             $agent,
@@ -295,7 +298,7 @@ class Runner
             $runConfig
         );
     }
-    
+
     /**
      * Run input guardrails.
      *
@@ -306,29 +309,30 @@ class Runner
      * @return array
      */
     protected function runInputGuardrails(
-        Agent $agent,
-        array $guardrails,
-        $input,
+        Agent      $agent,
+        array      $guardrails,
+                   $input,
         RunContext $context
-    ): array {
+    ): array
+    {
         if (empty($guardrails)) {
             return [];
         }
-        
+
         $results = [];
-        
+
         foreach ($guardrails as $guardrail) {
             $result = $guardrail->check($input, $context, $agent);
             $results[] = new InputGuardrailResult($guardrail, $result);
-            
+
             if ($result->tripwireTriggered) {
                 throw new Exceptions\InputGuardrailTripwireTriggered($result);
             }
         }
-        
+
         return $results;
     }
-    
+
     /**
      * Run output guardrails.
      *
@@ -339,29 +343,30 @@ class Runner
      * @return array
      */
     protected function runOutputGuardrails(
-        array $guardrails,
-        Agent $agent,
-        $agentOutput,
+        array      $guardrails,
+        Agent      $agent,
+                   $agentOutput,
         RunContext $context
-    ): array {
+    ): array
+    {
         if (empty($guardrails)) {
             return [];
         }
-        
+
         $results = [];
-        
+
         foreach ($guardrails as $guardrail) {
             $result = $guardrail->check($agentOutput, $context, $agent);
             $results[] = new OutputGuardrailResult($guardrail, $result);
-            
+
             if ($result->tripwireTriggered) {
                 throw new Exceptions\OutputGuardrailTripwireTriggered($result);
             }
         }
-        
+
         return $results;
     }
-    
+
     /**
      * Get the model to use for this agent.
      *
@@ -378,10 +383,10 @@ class Runner
         } elseif ($agent->getModel() instanceof Models\Model) {
             return $agent->getModel();
         }
-        
+
         return $this->modelProvider->getModel($agent->getModel() ?? config('agents.default_model'));
     }
-    
+
     /**
      * Resolve model settings.
      *
@@ -394,10 +399,10 @@ class Runner
         if ($runConfigSettings === null) {
             return $agentSettings;
         }
-        
+
         return $agentSettings->merge($runConfigSettings);
     }
-    
+
     /**
      * Process the model response.
      *
@@ -408,14 +413,15 @@ class Runner
      * @return array
      */
     protected function processModelResponse(
-        Agent $agent,
+        Agent         $agent,
         ModelResponse $response,
-        ?string $outputType,
-        array $handoffs
-    ): array {
+        ?string       $outputType,
+        array         $handoffs
+    ): array
+    {
         // Process the response to determine if it's a final output, handoff, or tool call
         $output = $response->getOutput();
-        
+
         // Check for handoffs
         foreach ($handoffs as $handoff) {
             if ($handoff instanceof Handoff && isset($output['handoff']) && $output['handoff'] === $handoff->getAgentName()) {
@@ -426,7 +432,7 @@ class Runner
                 ];
             }
         }
-        
+
         // Check for tool calls
         if (isset($output['tool_calls']) && !empty($output['tool_calls'])) {
             return [
@@ -434,14 +440,14 @@ class Runner
                 'toolCalls' => $output['tool_calls'],
             ];
         }
-        
+
         // If no handoffs or tool calls, it's a final output
         return [
             'type' => 'final_output',
             'output' => $outputType ? $output : $output['content'] ?? '',
         ];
     }
-    
+
     /**
      * Execute tools and side effects.
      *
@@ -455,20 +461,21 @@ class Runner
      * @return array
      */
     protected function executeToolsAndSideEffects(
-        Agent $agent,
-        $originalInput,
-        array $preStepItems,
+        Agent         $agent,
+                      $originalInput,
+        array         $preStepItems,
         ModelResponse $newResponse,
-        array $processedResponse,
-        RunContext $contextWrapper,
-        RunConfig $runConfig
-    ): array {
+        array         $processedResponse,
+        RunContext    $contextWrapper,
+        RunConfig     $runConfig
+    ): array
+    {
         $generatedItems = $preStepItems;
         $nextStep = null;
-        
+
         // Add the AI response as an item
         $generatedItems[] = new RunItem('ai_message', $newResponse->getOutput());
-        
+
         if ($processedResponse['type'] === 'final_output') {
             $nextStep = [
                 'type' => 'final_output',
@@ -483,23 +490,23 @@ class Runner
             // Execute tool calls
             foreach ($processedResponse['toolCalls'] as $toolCall) {
                 $tool = $this->findTool($agent->getTools(), $toolCall['name']);
-                
+
                 if ($tool) {
                     $arguments = $toolCall['arguments'] ?? [];
                     $result = $tool->execute($contextWrapper, $arguments);
-                    
+
                     $generatedItems[] = new RunItem('tool_result', [
                         'tool_name' => $toolCall['name'],
                         'result' => $result,
                     ]);
                 }
             }
-            
+
             $nextStep = [
                 'type' => 'run_again',
             ];
         }
-        
+
         return [
             'originalInput' => $originalInput,
             'generatedItems' => $generatedItems,
@@ -507,7 +514,7 @@ class Runner
             'nextStep' => $nextStep,
         ];
     }
-    
+
     /**
      * Find a tool by name.
      *
@@ -522,10 +529,10 @@ class Runner
                 return $tool;
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Prepare input for the model.
      *
@@ -536,14 +543,14 @@ class Runner
     protected function prepareInput($originalInput, array $generatedItems): array
     {
         $input = is_string($originalInput) ? [['role' => 'user', 'content' => $originalInput]] : $originalInput;
-        
+
         foreach ($generatedItems as $item) {
             $input[] = $item->toInputItem();
         }
-        
+
         return $input;
     }
-    
+
     /**
      * Get handoff names.
      *
@@ -562,7 +569,7 @@ class Runner
         }
         return $names;
     }
-    
+
     /**
      * Get tool names.
      *

@@ -1,6 +1,6 @@
 <?php
 
-namespace JawadAshraf\OpenAI\Agents\Guardrails;
+namespace OpenAI\Agents\Guardrails;
 
 class InputGuardrailResult
 {

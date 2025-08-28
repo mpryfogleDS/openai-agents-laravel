@@ -1,6 +1,6 @@
 <?php
 
-namespace JawadAshraf\OpenAI\Agents;
+namespace OpenAI\Agents;
 
 use OpenAI\Agents\Items\Usage;
 
@@ -11,7 +11,7 @@ class RunContext
      *
      * @var mixed
      */
-    protected $context;
+    protected mixed $context;
     
     /**
      * The usage stats.
@@ -23,9 +23,9 @@ class RunContext
     /**
      * Create a new run context instance.
      *
-     * @param mixed $context
+     * @param mixed|null $context
      */
-    public function __construct($context = null)
+    public function __construct(mixed $context = null)
     {
         $this->context = $context;
         $this->usage = new Usage();
@@ -36,7 +36,7 @@ class RunContext
      *
      * @return mixed
      */
-    public function getContext()
+    public function getContext(): mixed
     {
         return $this->context;
     }
@@ -47,7 +47,7 @@ class RunContext
      * @param mixed $context
      * @return $this
      */
-    public function setContext($context): self
+    public function setContext(mixed $context): self
     {
         $this->context = $context;
         return $this;

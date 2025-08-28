@@ -1,6 +1,6 @@
 <?php
 
-namespace JawadAshraf\OpenAI\Agents\Tracing;
+namespace OpenAI\Agents\Tracing;
 
 use Illuminate\Support\Facades\Log;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace JawadAshraf\OpenAI\Agents\Items;
+namespace OpenAI\Agents\Items;
 
 class ItemHelpers
 {

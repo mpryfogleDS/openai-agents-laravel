@@ -1,6 +1,6 @@
 <?php
 
-namespace JawadAshraf\OpenAI\Agents\Facades;
+namespace OpenAI\Agents\Facades;
 
 use Illuminate\Support\Facades\Facade;
 use OpenAI\Agents\Runner as RunnerClass;

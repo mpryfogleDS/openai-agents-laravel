@@ -1,6 +1,6 @@
 <?php
 
-namespace JawadAshraf\OpenAI\Agents\Handoffs;
+namespace OpenAI\Agents\Handoffs;
 
 use OpenAI\Agents\Agent;
 use OpenAI\Agents\RunContext;

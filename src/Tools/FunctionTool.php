@@ -1,6 +1,6 @@
 <?php
 
-namespace JawadAshraf\OpenAI\Agents\Tools;
+namespace OpenAI\Agents\Tools;
 
 use Closure;
 

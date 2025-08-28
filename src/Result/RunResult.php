@@ -1,6 +1,6 @@
 <?php
 
-namespace JawadAshraf\OpenAI\Agents\Result;
+namespace OpenAI\Agents\Result;
 
 use OpenAI\Agents\Agent;
 use OpenAI\Agents\Items\ModelResponse;

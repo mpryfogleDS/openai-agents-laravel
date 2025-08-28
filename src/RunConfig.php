@@ -1,6 +1,6 @@
 <?php
 
-namespace JawadAshraf\OpenAI\Agents;
+namespace OpenAI\Agents;
 
 use OpenAI\Agents\Models\Model;
 use OpenAI\Agents\Models\ModelSettings;
@@ -17,84 +17,84 @@ class RunConfig
      *
      * @var string|Model|null
      */
-    public $model = null;
+    public string|Model|null $model = null;
     
     /**
      * The model provider to use when looking up string model names.
      *
      * @var ModelProviderInterface
      */
-    public $modelProvider;
+    public mixed $modelProvider;
     
     /**
      * Configure global model settings.
      *
      * @var ModelSettings|null
      */
-    public $modelSettings = null;
+    public ?ModelSettings $modelSettings = null;
     
     /**
      * A global input filter to apply to all handoffs.
      *
      * @var HandoffInputFilter|null
      */
-    public $handoffInputFilter = null;
+    public ?HandoffInputFilter $handoffInputFilter = null;
     
     /**
      * A list of input guardrails to run on the initial run input.
      *
      * @var array
      */
-    public $inputGuardrails = [];
+    public array $inputGuardrails = [];
     
     /**
      * A list of output guardrails to run on the final output of the run.
      *
      * @var array
      */
-    public $outputGuardrails = [];
+    public array $outputGuardrails = [];
     
     /**
      * Whether tracing is disabled for the agent run.
      *
      * @var bool
      */
-    public $tracingDisabled = false;
+    public bool $tracingDisabled = false;
     
     /**
      * Whether we include potentially sensitive data in traces.
      *
      * @var bool
      */
-    public $traceIncludeSensitiveData = true;
+    public bool $traceIncludeSensitiveData = true;
     
     /**
      * The name of the run, used for tracing.
      *
      * @var string
      */
-    public $workflowName = 'Agent workflow';
+    public string $workflowName = 'Agent workflow';
     
     /**
      * A custom trace ID to use for tracing.
      *
      * @var string|null
      */
-    public $traceId = null;
+    public ?string $traceId = null;
     
     /**
      * A grouping identifier to use for tracing.
      *
      * @var string|null
      */
-    public $groupId = null;
+    public ?string $groupId = null;
     
     /**
      * An optional dictionary of additional metadata to include with the trace.
      *
      * @var array|null
      */
-    public $traceMetadata = null;
+    public ?array $traceMetadata = null;
     
     /**
      * Create a new run config instance.
@@ -112,7 +112,7 @@ class RunConfig
      * @param string|Model $model
      * @return $this
      */
-    public function withModel($model): self
+    public function withModel(string|Model $model): self
     {
         $this->model = $model;
         return $this;
